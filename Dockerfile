@@ -22,7 +22,7 @@ ENTRYPOINT ["/tini", "--"]
 # Get build dependencies
 RUN \
        apt-get update \
-    && apt-get install -y --no-install-recommends git wget ca-certificates gnupg2 \
+    && apt-get install -y --no-install-recommends git wget ca-certificates gnupg2 build-essential \
     && wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
     && dpkg -i erlang-solutions_1.0_all.deb \
     && apt-get update \
@@ -74,3 +74,10 @@ RUN \
     && ln -s /docker-config.exs config/dev.secret.exs \
     && mix deps.get \
     && mix compile
+
+# Strip container
+USER root
+RUN \
+       apt-get remove -y build-essential wget git gnupg2 \
+    && apt-get autoremove -y
+USER pleroma
